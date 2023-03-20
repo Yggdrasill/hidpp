@@ -29,6 +29,7 @@ int main(void)
   union hidpp_msg response = { 0 };
   int fd;
   int bytes;
+  int features;
 
 #if TEST
   msg.hidpp.type = 0x11;    // long message
@@ -66,6 +67,27 @@ int main(void)
     printf("%02x ", response.data[i]);
   }
   puts("");
+
+  msg.hidpp.cmd = response.hidpp.args[0];
+  write(fd, &msg, sizeof(msg) );
+  bytes = read(fd, &response, sizeof(response) );
+  features = response.hidpp.args[0];
+
+  for(int i = 0; i < bytes; i++) {
+    printf("%02x ", response.data[i]);
+  }
+  printf("\n-----------------------------------------------------------\n");
+
+  msg.hidpp.func |= (1 << 4);
+  for(int i = 0; i < features; i++) {
+    msg.hidpp.args[0] = i;
+    write(fd, &msg, sizeof(msg) );
+    bytes = read(fd, &response, sizeof(response) );
+    for(int j = 0; j < bytes; j++) {
+      printf("%02x ", response.data[j]);
+    }
+    puts("");
+  }
 
   return 0;
 }
