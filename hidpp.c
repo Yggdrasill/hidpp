@@ -24,7 +24,9 @@ union hidpp_msg {
 int main(void)
 {
   union hidpp_msg msg = { 0 };
+  union hidpp_msg response = { 0 };
   int fd;
+  int bytes;
 
   msg.hidpp.type = 0x11;    // long message
   msg.hidpp.index = 0xFF;   // wired mouse or transceiver, otherwise 1-6
@@ -43,6 +45,13 @@ int main(void)
   write(fd, &msg, sizeof(msg) );
   msg.data[4] = 0x01;       // LED 1
   write(fd, &msg, sizeof(msg) );
+
+  bytes = read(fd, &response, sizeof(response) );
+
+  for(int i = 0; i < bytes; i++) {
+    printf("%x ", response.data[i]);
+  }
+  puts("");
 
   return 0;
 }
