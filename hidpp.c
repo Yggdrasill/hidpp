@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define TEST 1
+#define TEST 0
 
 #define VENDOR_ID   0x046D
 #define PRODUCT_ID  0xC08F
@@ -47,8 +47,8 @@ int main(void)
   msg.hidpp.index = 0xFF;
   msg.hidpp.cmd = 0x00;
   msg.hidpp.func = 0x0E;
-  msg.hidpp.args[0] = 0x80;
-  msg.hidpp.args[1] = 0x60;
+  msg.hidpp.args[0] = 0x00;
+  msg.hidpp.args[1] = 0x01;
 #endif
 
   fd = open("/dev/hidraw1", O_RDWR);
@@ -63,7 +63,7 @@ int main(void)
   bytes = read(fd, &response, sizeof(response) );
 
   for(int i = 0; i < bytes; i++) {
-    printf("%x ", response.data[i]);
+    printf("%02x ", response.data[i]);
   }
   puts("");
 
