@@ -1,0 +1,22 @@
+# HID++ message format
+
+  The HID++ message format is a series of bytes, either 7 or 20 bytes in length.
+  When a message is sent or received, the first 4 bytes are metadata, followed
+  by 3 or 16 bytes of data.
+
+  --- Byte 0 describes the type of message. Either 0x10 (short) or 0x11 (long),
+      7 or 20 bytes respectively.
+
+  --- Byte 1 is the device index. This can be 0xFF for a wired device or a
+      Logitech Unifying transceiver. If the device connected by such a
+      transceiver wirelessly, the device index is 1-6.
+
+  --- Byte 2 is the command. These can be register reads/writes, LED state
+      reads/writes, DPI configuration reads/writes etc.
+
+  --- Byte 3 is an address, register or a particular request, as far as I can
+      tell. Not too sure about this one yet.
+
+  These 4 bytes are followed by the command arguments, or if the device is
+  sending to the host device, the data.
+
