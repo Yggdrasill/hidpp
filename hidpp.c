@@ -6,11 +6,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define TEST 0
-
-#define VENDOR_ID       0x046D
-#define PRODUCT_ID      0xC08F
-
 #define MSG_SHORT       0x10
 #define MSG_LONG        0x11
 
