@@ -32,6 +32,27 @@ union hidpp_msg {
   uint8_t data[20];
 };
 
+struct hidpp_feature {
+  uint16_t  id;
+  uint8_t   index;
+  uint8_t   type;
+};
+
+enum HIDPP_FEATURE {
+  FEAT_ROOT          = 0x0000,
+  FEAT_FEATURESET    = 0x0001,
+  FEAT_FWINFO        = 0x0003,
+  FEAT_DEVNAMETYPE   = 0x0005,
+  FEAT_BATINFO       = 0x1000,
+  FEAT_KBDSPECIAL    = 0x1B00,
+  FEAT_WDEVSTATUS    = 0x1D4B,
+  FEAT_DFUCONTROL    = 0X00C2,
+  FEAT_ADJUSTDPI     = 0X2201,
+  FEAT_REPORTRATE    = 0X8060,
+  FEAT_COLORLEDFX    = 0X8070,
+  FEAT_DEVPROFILES   = 0X8100
+};
+
 int main(void)
 {
   union hidpp_msg msg = { 0 };
