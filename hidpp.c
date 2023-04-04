@@ -53,6 +53,45 @@ enum HIDPP_FEATURE {
   FEAT_DEVPROFILES   = 0X8100
 };
 
+static inline union hidpp_msg
+msg_init(uint8_t type, uint8_t devidx, uint8_t cmd, uint8_t fcnt)
+{
+  return (union hidpp_msg) {
+    .data = { type, devidx, cmd, fcnt << 4 | MSG_SWID, 0 }
+  };
+}
+
+ssize_t msg_read(int fd, union hidpp_msg *msg)
+{
+  ssize_t retval;
+  int expected;
+
+  retval = read(fd, msg, sizeof(*msg) );
+  if(retval < 0) goto error;
+
+  expected = msg->data[0] == MSG_SHORT ? MSG_SHORT_LEN : MSG_LONG_LEN;
+  if(retval != expected) retval = -2;
+  else if(msg->data[3] == 0x8F) retval = -3;
+
+error:
+  return retval;
+}
+
+ssize_t msg_send(int fd, union hidpp_msg *msg)
+{
+  ssize_t retval;
+  int expected;
+
+  retval = write(fd, msg, sizeof(*msg) );
+  if(retval < 0) goto error;
+
+  expected = msg->data[0] == MSG_SHORT ? MSG_SHORT_LEN : MSG_LONG_LEN;
+  if(retval != expected) retval = -2;
+
+error:
+  return retval;
+}
+
 int main(void)
 {
   union hidpp_msg msg = { 0 };
