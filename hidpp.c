@@ -125,6 +125,63 @@ cmd_get_id(const int fd, const uint8_t devidx,
   };
 }
 
+char *cmd_get_name(uint16_t id)
+{
+  switch(id) {
+    case FEAT_ROOT:         return "IRoot";
+    case FEAT_FEATURESET:   return "IFeatureSet";
+    case FEAT_FWINFO:       return "IFirmwareInfo";
+    case FEAT_DEVNAMETYPE:  return "GetDeviceNameType";
+    case FEAT_BATINFO:      return "BatteryLevelStatus";
+    case FEAT_KBDSPECIAL:   return "SpecialKeysMSEButtons";
+    case FEAT_WDEVSTATUS:   return "WirelessDeviceStatus";
+    case FEAT_DFUCONTROL:   return "DfuControlSigned";
+    case FEAT_ADJUSTDPI:    return "AdjustableDpi";
+    case FEAT_REPORTRATE:   return "ReportRate";
+    case FEAT_COLORLEDFX:   return "ColorLedEffects";
+    case FEAT_DEVPROFILES:  return "OnboardProfiles";
+  }
+
+  return "";
+}
+
+void cmds_print(const int fd)
+{
+  union hidpp_msg msg;
+  struct hidpp_feature feature;
+  char *name;
+  char *obsolete;
+  char *hidden;
+  char *internal;
+
+  int n;
+  int i;
+
+  uint8_t fs_idx;
+
+  feature = cmd_get_index(fd, 0xFF, FEAT_FEATURESET);
+  /* call GetCount() from IFeatureSet */
+  msg = msg_init(MSG_SHORT, 0xFF, feature.index, 0x00);
+  msg_send(fd, &msg);
+  msg_read(fd, &msg);
+  n = msg.hidpp.args[0];
+  fs_idx = feature.index;
+
+  for(i = 0; i < n; i++) {
+    feature = cmd_get_id(fd, 0xFF, fs_idx, i);
+    name = cmd_get_name(feature.id);
+    obsolete = feature.type & 0x80 ? " obsolete" : "";
+    hidden = feature.type & 0x40 ? " hidden" : "";
+    internal = feature.type & 0x20 ? " internal" : "";
+
+    printf("%-20s index %02x [%04x]%s%s%s\n",
+          name, feature.index, feature.id,
+          obsolete, hidden, internal);
+  }
+
+  return;
+}
+
 int main(void)
 {
   union hidpp_msg msg = { 0 };
