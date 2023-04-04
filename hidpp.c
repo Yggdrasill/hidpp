@@ -88,6 +88,43 @@ ssize_t msg_send(int fd, union hidpp_msg *msg)
   return retval;
 }
 
+struct hidpp_feature
+cmd_get_index(const int fd, const uint8_t devidx, const uint16_t id)
+{
+  union hidpp_msg msg;
+
+  /* feature index 0 is always root feature, call featureIndex() */
+  msg = msg_init(MSG_SHORT, devidx, 0x00, 0x00);
+  /* break up function id into big-endian bytes, assumes LE host machine */
+  msg.hidpp.args[0] = ( (char *)&id)[1];
+  msg.hidpp.args[1] = ( (char *)&id)[0];
+
+  /* TODO: handle errors */
+  msg_send(fd, &msg);
+  msg_read(fd, &msg);
+
+  return (struct hidpp_feature) { id, msg.data[4], msg.data[5] };
+}
+
+struct hidpp_feature
+cmd_get_id(const int fd, const uint8_t devidx,
+          const uint8_t index, const uint8_t query)
+{
+  union hidpp_msg msg;
+
+  /* call GetFeatureID() from IFeatureSet */
+  msg = msg_init(MSG_SHORT, devidx, index, 0x01);
+  msg.hidpp.args[0] = query;
+  msg_send(fd, &msg);
+  msg_read(fd, &msg);
+
+  return (struct hidpp_feature) {
+    msg.data[5] | msg.data[4] << 8,
+    query,
+    msg.data[6]
+  };
+}
+
 int main(void)
 {
   union hidpp_msg msg = { 0 };
