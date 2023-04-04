@@ -80,15 +80,11 @@ error:
 ssize_t msg_send(int fd, union hidpp_msg *msg)
 {
   ssize_t retval;
-  int expected;
+  int bytes;
 
-  retval = write(fd, msg, sizeof(*msg) );
-  if(retval < 0) goto error;
+  bytes = msg->data[0] == MSG_SHORT ? MSG_SHORT_LEN : MSG_LONG_LEN;
+  retval = write(fd, msg, bytes);
 
-  expected = msg->data[0] == MSG_SHORT ? MSG_SHORT_LEN : MSG_LONG_LEN;
-  if(retval != expected) retval = -2;
-
-error:
   return retval;
 }
 
