@@ -1,0 +1,9 @@
+This is a work-in-progress implementation of a program to interface with HID++
+2.0 devices. I don't own any HID++ 1.0 devices to work with. This program is
+mostly intended to just play around with my mouse and an attempt to understand
+the interface.
+
+Documentation can be found here:
+
+https://drive.google.com/drive/u/0/folders/0BxbRzx7vEV7eWmgwazJ3NUFfQ28
+https://lekensteyn.nl/files/logitech/
