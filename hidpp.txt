@@ -14,8 +14,9 @@
   --- Byte 2 is the command. These can be register reads/writes, LED state
       reads/writes, DPI configuration reads/writes etc.
 
-  --- Byte 3 is an address, register or a particular request, as far as I can
-      tell. Not too sure about this one yet.
+  --- Byte 3 is an address, register or a particular request. For HID++ 2.0
+      this would be a particular function call for the feature/command specified
+      in byte 2.
 
   These 4 bytes are followed by the command arguments, or if the device is
   sending to the host device, the data.
